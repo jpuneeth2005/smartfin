@@ -1,0 +1,40 @@
+<h4 class="text-center mb-4" style="color:#0B1F3A;">Create Account</h4>
+<div id="form-error" class="alert alert-danger d-none"></div>
+<form id="register-form" data-form="register">
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Full Name</label>
+    <input type="text" class="form-control" name="name" id="name" required />
+    <div class="invalid-feedback" id="name-error"></div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Email</label>
+    <input type="email" class="form-control" name="email" id="email" required />
+    <div class="invalid-feedback" id="email-error"></div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Password</label>
+    <div class="input-group">
+      <input type="password" class="form-control" name="password" id="password" required />
+      <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+        <i class="bi bi-eye" id="eyeIcon"></i>
+      </button>
+    </div>
+    <div class="invalid-feedback" id="password-error"></div>
+    <small class="text-muted">Min 8 chars, must include a letter and a number</small>
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Confirm Password</label>
+    <div class="input-group">
+      <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" required />
+      <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+        <i class="bi bi-eye" id="eyeIcon2"></i>
+      </button>
+    </div>
+    <div class="invalid-feedback" id="confirmPassword-error"></div>
+  </div>
+  <button type="submit" class="btn btn-primary w-100 fw-semibold" style="background:#0B1F3A;border-color:#0B1F3A;" id="submitBtn">
+    <span id="btnText">Create Account</span>
+    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
+  </button>
+</form>
+<p class="text-center mt-3 mb-0">Already have an account? <a href="/login" style="color:#0FB5A6;">Sign In</a></p>

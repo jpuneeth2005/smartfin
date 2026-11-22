@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 250px;
+  height: 100vh;
+  background: #0B1F3A;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  z-index: 1050;
+  overflow-y: auto;
+">
+  <!-- Brand -->
+  <div class="p-4 pb-2">
+    <span style="color:#0FB5A6; font-size:1.4rem; font-weight:700; letter-spacing:.5px;">💰 SmartFin</span>
+  </div>
+
+  <!-- Nav links -->
+  <ul class="nav flex-column px-3 mt-2 flex-grow-1">
+    <li class="nav-item mb-1">
+      <a href="/dashboard" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2 <%= typeof path !== 'undefined' && path.startsWith('/dashboard') ? 'active-nav' : '' %>"
+         style="color:<%= typeof path !== 'undefined' && path.startsWith('/dashboard') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+        <i class="bi bi-speedometer2 fs-5"></i> Dashboard
+      </a>
+    </li>
+    <li class="nav-item mb-1">
+      <a href="/transactions" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2 <%= typeof path !== 'undefined' && path.startsWith('/transactions') ? 'active-nav' : '' %>"
+         style="color:<%= typeof path !== 'undefined' && path.startsWith('/transactions') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+        <i class="bi bi-arrow-left-right fs-5"></i> Transactions
+      </a>
+    </li>
+    <li class="nav-item mb-1">
+      <a href="/budgets" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2 <%= typeof path !== 'undefined' && path.startsWith('/budgets') ? 'active-nav' : '' %>"
+         style="color:<%= typeof path !== 'undefined' && path.startsWith('/budgets') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+        <i class="bi bi-pie-chart fs-5"></i> Budgets
+      </a>
+    </li>
+    <li class="nav-item mb-1">
+      <a href="/analytics" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2 <%= typeof path !== 'undefined' && path.startsWith('/analytics') ? 'active-nav' : '' %>"
+         style="color:<%= typeof path !== 'undefined' && path.startsWith('/analytics') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+        <i class="bi bi-graph-up fs-5"></i> Analytics
+      </a>
+    </li>
+    <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'admin') { %>
+    <li class="nav-item mb-1">
+      <a href="/admin" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2 <%= typeof path !== 'undefined' && path.startsWith('/admin') ? 'active-nav' : '' %>"
+         style="color:<%= typeof path !== 'undefined' && path.startsWith('/admin') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+        <i class="bi bi-shield-lock fs-5"></i> Admin
+      </a>
+    </li>
+    <% } %>
+  </ul>
+
+  <!-- Logout -->
+  <div class="p-3 border-top" style="border-color:rgba(255,255,255,0.1)!important;">
+    <button id="logoutBtn" class="btn w-100 d-flex align-items-center gap-2 justify-content-center"
+            style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:none;" onclick="doLogout()">
+      <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT AREA ===== -->
+<div style="margin-left:250px; min-height:100vh; background:#F4F6FA;" id="mainContent">
+
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-light bg-white shadow-sm px-4 py-2">
+    <!-- Hamburger (mobile) -->
+    <button class="btn d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+      <i class="bi bi-list fs-4"></i>
+    </button>
+
+    <!-- Page Title -->
+    <span class="navbar-brand mb-0 fw-semibold fs-5" style="color:#0B1F3A;">
+      <%= typeof title !== 'undefined' ? title : 'Dashboard' %>
+    </span>
+
+    <!-- User info -->
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <span class="fw-semibold" style="color:#0B1F3A;"><%= currentUser.name %></span>
+        <span class="badge" style="background:<%= currentUser.role === 'admin' ? '#0FB5A6' : '#0B1F3A' %>;">
+          <%= currentUser.role %>
+        </span>
+      <% } %>
+    </div>
+  </nav>
+
+  <!-- Main Page Body -->
+  <main class="p-4">
+    <%- body %>
+  </main>
+</div>
+
+<!-- ===== MOBILE OFF-CANVAS SIDEBAR ===== -->
+<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel"
+     style="background:#0B1F3A; color:#fff; width:250px;">
+  <div class="offcanvas-header pb-2">
+    <span class="offcanvas-title fw-bold" id="mobileSidebarLabel" style="color:#0FB5A6; font-size:1.3rem;">💰 SmartFin</span>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body px-3 d-flex flex-column p-0">
+    <ul class="nav flex-column flex-grow-1">
+      <li class="nav-item mb-1">
+        <a href="/dashboard" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+           style="color:<%= typeof path !== 'undefined' && path.startsWith('/dashboard') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+          <i class="bi bi-speedometer2 fs-5"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a href="/transactions" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+           style="color:<%= typeof path !== 'undefined' && path.startsWith('/transactions') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+          <i class="bi bi-arrow-left-right fs-5"></i> Transactions
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a href="/budgets" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+           style="color:<%= typeof path !== 'undefined' && path.startsWith('/budgets') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+          <i class="bi bi-pie-chart fs-5"></i> Budgets
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a href="/analytics" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+           style="color:<%= typeof path !== 'undefined' && path.startsWith('/analytics') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+          <i class="bi bi-graph-up fs-5"></i> Analytics
+        </a>
+      </li>
+      <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'admin') { %>
+      <li class="nav-item mb-1">
+        <a href="/admin" class="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+           style="color:<%= typeof path !== 'undefined' && path.startsWith('/admin') ? '#0FB5A6' : 'rgba(255,255,255,0.8)' %>; font-weight:500;">
+          <i class="bi bi-shield-lock fs-5"></i> Admin
+        </a>
+      </li>
+      <% } %>
+    </ul>
+    <div class="p-3 border-top" style="border-color:rgba(255,255,255,0.1)!important;">
+      <button class="btn w-100 d-flex align-items-center gap-2 justify-content-center"
+              style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:none;" onclick="doLogout()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index:1100;"></div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/auth.js"></script>
+<% if (typeof scripts !== 'undefined') { scripts.forEach(function(s) { %>
+<script src="<%= s %>"></script>
+<% }) } %>
+
+<!-- Responsive sidebar hide on mobile -->
+<style>
+  @media (max-width: 991.98px) {
+    #sidebar { display: none !important; }
+    #mainContent { margin-left: 0 !important; }
+  }
+  #sidebar .active-nav {
+    background: rgba(15,181,166,0.15);
+  }
+  #sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff !important;
+  }
+</style>
+
+<script>
+  function doLogout() {
+    $.ajax({
+      url: '/api/auth/logout',
+      method: 'POST',
+      success: function() {
+        window.location.href = '/login';
+      },
+      error: function() {
+        window.location.href = '/login';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
