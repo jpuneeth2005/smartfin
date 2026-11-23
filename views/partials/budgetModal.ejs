@@ -1,0 +1,98 @@
+<!-- Budget Add/Edit Modal -->
+<div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="budgetModalTitle" style="color: #0B1F3A;">Set Budget</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="budgetForm" novalidate>
+        <div class="modal-body py-3">
+          <input type="hidden" id="budgetId" name="id" />
+
+          <!-- Month -->
+          <div class="mb-3">
+            <label for="budgetMonth" class="form-label small fw-semibold text-muted">Month</label>
+            <input type="month" id="budgetMonth" class="form-control" required />
+            <div class="invalid-feedback" id="budgetMonthError"></div>
+            <small class="text-muted" id="budgetMonthHelp" style="display: none;">Month cannot be changed for an existing budget.</small>
+          </div>
+
+          <!-- Category -->
+          <div class="mb-3">
+            <label for="budgetCategory" class="form-label small fw-semibold text-muted">Category</label>
+            <select id="budgetCategory" class="form-select" required>
+              <option value="">Select Category</option>
+              <option value="Overall">Overall (Total Monthly Expenses)</option>
+              <option value="Food">Food</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Transport">Transport</option>
+              <option value="Education">Education</option>
+              <option value="Bills">Bills</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="invalid-feedback" id="budgetCategoryError"></div>
+            <small class="text-muted" id="budgetCategoryHelp" style="display: none;">Category cannot be changed for an existing budget.</small>
+          </div>
+
+          <!-- Limit -->
+          <div class="mb-3">
+            <label for="budgetLimit" class="form-label small fw-semibold text-muted">Monthly Limit (₹)</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light fw-bold">₹</span>
+              <input type="number" id="budgetLimit" class="form-control" placeholder="0.00" step="0.01" min="0.01" required />
+            </div>
+            <div class="invalid-feedback d-block" id="budgetLimitError" style="display:none;"></div>
+          </div>
+
+          <!-- Alert Threshold (%) -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label for="budgetAlertThreshold" class="form-label small fw-semibold text-muted mb-0">Alert Threshold (%)</label>
+              <span class="badge bg-light text-dark border" id="thresholdDisplay">80%</span>
+            </div>
+            <input type="range" class="form-range" id="budgetAlertThresholdRange" min="1" max="100" value="80" />
+            <div class="input-group input-group-sm mt-1">
+              <input type="number" id="budgetAlertThreshold" class="form-control" min="1" max="100" value="80" required />
+              <span class="input-group-text">%</span>
+            </div>
+            <div class="invalid-feedback" id="budgetAlertThresholdError"></div>
+            <small class="text-muted">You will be alerted when spending reaches or exceeds this percentage.</small>
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-teal fw-semibold" id="budgetSubmitBtn">
+            <span class="spinner-border spinner-border-sm me-1 d-none" id="budgetSubmitSpinner" role="status" aria-hidden="true"></span>
+            <span id="budgetSubmitText">Save Budget</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteBudgetModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-body text-center p-4">
+        <div class="rounded-circle d-inline-flex p-3 mb-3" style="background-color: rgba(239,68,68,0.1); color: #ef4444;">
+          <i class="bi bi-trash3 fs-3"></i>
+        </div>
+        <h5 class="fw-bold mb-2">Delete Budget?</h5>
+        <p class="text-muted small mb-4">Are you sure you want to delete the budget for <strong id="deleteCategoryName"></strong>? This cannot be undone.</p>
+        <div class="d-flex justify-content-center gap-2">
+          <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger px-3 fw-semibold" id="confirmDeleteBudgetBtn">
+            <span class="spinner-border spinner-border-sm me-1 d-none" id="deleteBudgetSpinner"></span>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

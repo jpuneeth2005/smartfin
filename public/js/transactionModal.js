@@ -183,6 +183,25 @@
         var msg = id ? 'Transaction updated successfully!' : 'Transaction created successfully!';
         SmartFin.showToast('success', msg);
         $(document).trigger('transaction:saved', [res.data]);
+
+        // If saved an EXPENSE, check budget alerts for that category or Overall
+        if (payload.type === 'expense') {
+          var txMonth = (payload.date && payload.date.slice(0, 7)) || undefined;
+          var budgetUrl = '/api/budgets' + (txMonth ? '?month=' + txMonth : '');
+          SmartFin.api('GET', budgetUrl)
+            .done(function (bRes) {
+              if (bRes && bRes.data && bRes.data.alerts && Array.isArray(bRes.data.alerts)) {
+                bRes.data.alerts.forEach(function (alert) {
+                  if (alert.category === payload.category || alert.category === 'Overall') {
+                    SmartFin.showToast('warning', alert.message);
+                  }
+                });
+              }
+            })
+            .fail(function () {
+              // Silently ignore budget alert fetch error
+            });
+        }
       })
       .fail(function (xhr) {
         setSubmittingState(false);

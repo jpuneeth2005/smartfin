@@ -13,6 +13,8 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const budgetRoutes = require('./routes/budgetRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 
 const app = express();
@@ -76,6 +78,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/budgets', budgetRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/', pageRoutes);
 
 // Error handling

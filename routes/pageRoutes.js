@@ -45,4 +45,22 @@ router.get('/transactions', ensureAuth, (req, res) => {
   });
 });
 
+// GET /budgets — requires authentication
+router.get('/budgets', ensureAuth, (req, res) => {
+  res.render('pages/budgets', {
+    title: 'Budgets',
+    path: '/budgets',
+    scripts: ['/js/transactionModal.js', '/js/budgets.js'],
+  });
+});
+
+// GET /analytics — requires authentication
+router.get('/analytics', ensureAuth, (req, res) => {
+  res.render('pages/analytics', {
+    title: 'Analytics',
+    path: '/analytics',
+    scripts: ['/js/analytics.js'],
+  });
+});
+
 module.exports = router;

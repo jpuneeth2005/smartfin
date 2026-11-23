@@ -1,0 +1,272 @@
+<div class="container-fluid px-0">
+  <!-- Top Header & Filter Controls -->
+  <div class="card border-0 shadow-sm mb-4" style="border-radius: 0.75rem;">
+    <div class="card-body p-3 p-md-4">
+      <div class="d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center gap-3">
+        <!-- Title -->
+        <div>
+          <h2 class="fw-bold mb-1" style="color: #0B1F3A;">Financial Analytics</h2>
+          <p class="text-muted mb-0 small">Analyze your income, expense trends, spending categories, and savings performance.</p>
+        </div>
+
+        <!-- Presets and Controls -->
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <!-- Preset Buttons -->
+          <div class="btn-group btn-group-sm" role="group" id="presetButtonGroup">
+            <button type="button" class="btn btn-outline-secondary" data-preset="today">Today</button>
+            <button type="button" class="btn btn-outline-secondary" data-preset="last7">Last 7 Days</button>
+            <button type="button" class="btn btn-outline-secondary active" data-preset="thisMonth">This Month</button>
+            <button type="button" class="btn btn-outline-secondary" data-preset="thisYear">This Year</button>
+            <button type="button" class="btn btn-outline-secondary" data-preset="custom">Custom</button>
+          </div>
+
+          <!-- Group By Toggle -->
+          <div class="btn-group btn-group-sm ms-md-2" role="group" id="groupByButtonGroup">
+            <button type="button" class="btn btn-outline-secondary active" data-group="day">Daily</button>
+            <button type="button" class="btn btn-outline-secondary" data-group="week">Weekly</button>
+            <button type="button" class="btn btn-outline-secondary" data-group="month">Monthly</button>
+            <button type="button" class="btn btn-outline-secondary" data-group="year">Yearly</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Date Row (Hidden by default unless custom preset active) -->
+      <div id="customDateRow" class="row g-2 align-items-end mt-3 pt-3 border-top d-none">
+        <div class="col-12 col-sm-auto">
+          <label for="inputFrom" class="form-label small fw-semibold text-muted mb-1">From Date</label>
+          <input type="date" id="inputFrom" class="form-control form-control-sm" />
+        </div>
+        <div class="col-12 col-sm-auto">
+          <label for="inputTo" class="form-label small fw-semibold text-muted mb-1">To Date</label>
+          <input type="date" id="inputTo" class="form-control form-control-sm" />
+        </div>
+        <div class="col-12 col-sm-auto">
+          <button type="button" class="btn btn-sm btn-teal fw-semibold" id="btnApplyCustom">
+            <i class="bi bi-filter me-1"></i> Apply
+          </button>
+        </div>
+        <div class="col-12">
+          <small class="text-danger d-none" id="customDateError"></small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 Summary Stat Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Total Expenses -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100 p-3" style="border-radius: 0.75rem;">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Total Expenses</span>
+          <div class="rounded-circle p-2" style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <i class="bi bi-graph-down-arrow fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-expense" id="statPeriodExpense">
+            <div class="skeleton-shimmer" style="height: 28px; width: 120px;"></div>
+          </div>
+          <small class="text-muted" id="statExpenseSubtext">Selected period</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Income -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100 p-3" style="border-radius: 0.75rem;">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Total Income</span>
+          <div class="rounded-circle p-2" style="background-color: rgba(34, 197, 94, 0.1); color: #22c55e;">
+            <i class="bi bi-graph-up-arrow fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-income" id="statPeriodIncome">
+            <div class="skeleton-shimmer" style="height: 28px; width: 120px;"></div>
+          </div>
+          <small class="text-muted">Selected period</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Net Savings -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100 p-3" style="border-radius: 0.75rem;">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Net Savings</span>
+          <div class="rounded-circle p-2" style="background-color: rgba(15, 181, 166, 0.1); color: #0FB5A6;">
+            <i class="bi bi-wallet2 fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-navy" id="statPeriodSavings">
+            <div class="skeleton-shimmer" style="height: 28px; width: 120px;"></div>
+          </div>
+          <small class="text-muted" id="statSavingsRate">Income - Expense</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Spending Category -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm h-100 p-3" style="border-radius: 0.75rem;">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Top Category</span>
+          <div class="rounded-circle p-2" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+            <i class="bi bi-trophy fs-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-dark text-truncate" id="statTopCategory">
+            <div class="skeleton-shimmer" style="height: 28px; width: 120px;"></div>
+          </div>
+          <small class="text-muted" id="statTopCategoryDetail">Highest expense share</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 Charts Grid (2 Rows x 2 Columns) -->
+  <div class="row g-4">
+    <!-- 1. Expense Trend Line Chart -->
+    <div class="col-12 col-xl-8">
+      <div class="card border-0 shadow-sm h-100" style="border-radius: 0.75rem;">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-0" style="color: #0B1F3A;">Expense Trend</h5>
+            <small class="text-muted">Daily/Weekly spending with average baseline</small>
+          </div>
+          <span class="badge bg-light text-muted border" id="trendBadge">Daily</span>
+        </div>
+        <div class="card-body px-4 pb-4 pt-1 position-relative">
+          <!-- Skeleton -->
+          <div class="skeleton-chart d-flex align-items-end justify-content-around h-100 py-4" id="trendSkeleton" style="min-height: 320px;">
+            <div class="skeleton-shimmer" style="height: 35%; width: 25px;"></div>
+            <div class="skeleton-shimmer" style="height: 60%; width: 25px;"></div>
+            <div class="skeleton-shimmer" style="height: 45%; width: 25px;"></div>
+            <div class="skeleton-shimmer" style="height: 80%; width: 25px;"></div>
+            <div class="skeleton-shimmer" style="height: 55%; width: 25px;"></div>
+            <div class="skeleton-shimmer" style="height: 70%; width: 25px;"></div>
+            <div class="skeleton-shimmer" style="height: 40%; width: 25px;"></div>
+          </div>
+          <!-- Chart Canvas -->
+          <div id="trendChartContainer" style="display: none; height: 320px; position: relative;">
+            <canvas id="trendChart"></canvas>
+          </div>
+          <!-- Empty State -->
+          <div id="trendEmptyState" class="text-center py-5 d-none position-absolute top-50 start-50 translate-middle w-100">
+            <i class="bi bi-graph-up fs-1 text-muted"></i>
+            <p class="text-muted small mt-2 mb-0">No expense trend data for this period.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Category Spending Doughnut Chart -->
+    <div class="col-12 col-xl-4">
+      <div class="card border-0 shadow-sm h-100" style="border-radius: 0.75rem;">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-0" style="color: #0B1F3A;">Category Breakdown</h5>
+            <small class="text-muted">Click a slice to filter transactions</small>
+          </div>
+          <i class="bi bi-pie-chart text-teal fs-5"></i>
+        </div>
+        <div class="card-body px-4 pb-4 pt-1 position-relative">
+          <!-- Skeleton -->
+          <div class="skeleton-chart d-flex align-items-center justify-content-center h-100 py-4" id="categorySkeleton" style="min-height: 320px;">
+            <div class="skeleton-shimmer rounded-circle" style="height: 200px; width: 200px;"></div>
+          </div>
+          <!-- Chart Canvas -->
+          <div id="categoryChartContainer" style="display: none; height: 320px; position: relative;">
+            <canvas id="categoryChart"></canvas>
+          </div>
+          <!-- Empty State -->
+          <div id="categoryEmptyState" class="text-center py-5 d-none position-absolute top-50 start-50 translate-middle w-100">
+            <i class="bi bi-pie-chart fs-1 text-muted"></i>
+            <p class="text-muted small mt-2 mb-0">No category spending in this period.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Grouped Bar Chart: Income vs Expense -->
+    <div class="col-12 col-xl-6">
+      <div class="card border-0 shadow-sm h-100" style="border-radius: 0.75rem;">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-0" style="color: #0B1F3A;">Income vs Expense</h5>
+            <small class="text-muted">Comparative cash flow for selected period</small>
+          </div>
+          <span class="badge bg-light text-muted border"><i class="bi bi-arrow-left-right me-1"></i>Comparison</span>
+        </div>
+        <div class="card-body px-4 pb-4 pt-1 position-relative">
+          <!-- Skeleton -->
+          <div class="skeleton-chart d-flex align-items-end justify-content-around h-100 py-4" id="incomeVsExpenseSkeleton" style="min-height: 300px;">
+            <div class="skeleton-shimmer" style="height: 40%; width: 20px;"></div>
+            <div class="skeleton-shimmer" style="height: 60%; width: 20px;"></div>
+            <div class="skeleton-shimmer" style="height: 50%; width: 20px;"></div>
+            <div class="skeleton-shimmer" style="height: 75%; width: 20px;"></div>
+            <div class="skeleton-shimmer" style="height: 30%; width: 20px;"></div>
+          </div>
+          <!-- Chart Canvas -->
+          <div id="incomeVsExpenseChartContainer" style="display: none; height: 300px; position: relative;">
+            <canvas id="incomeVsExpenseChart"></canvas>
+          </div>
+          <!-- Empty State -->
+          <div id="incomeVsExpenseEmptyState" class="text-center py-5 d-none position-absolute top-50 start-50 translate-middle w-100">
+            <i class="bi bi-bar-chart fs-1 text-muted"></i>
+            <p class="text-muted small mt-2 mb-0">No cash flow data for this period.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Bar Chart: Monthly Savings -->
+    <div class="col-12 col-xl-6">
+      <div class="card border-0 shadow-sm h-100" style="border-radius: 0.75rem;">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-0" style="color: #0B1F3A;">Monthly Savings (Last 12 Months)</h5>
+            <small class="text-muted">Net savings with savings rate</small>
+          </div>
+          <span class="badge bg-light text-muted border"><i class="bi bi-piggy-bank me-1"></i>12 Months</span>
+        </div>
+        <div class="card-body px-4 pb-4 pt-1 position-relative">
+          <!-- Skeleton -->
+          <div class="skeleton-chart d-flex align-items-end justify-content-around h-100 py-4" id="savingsSkeleton" style="min-height: 300px;">
+            <div class="skeleton-shimmer" style="height: 50%; width: 18px;"></div>
+            <div class="skeleton-shimmer" style="height: 70%; width: 18px;"></div>
+            <div class="skeleton-shimmer" style="height: 30%; width: 18px;"></div>
+            <div class="skeleton-shimmer" style="height: 80%; width: 18px;"></div>
+            <div class="skeleton-shimmer" style="height: 60%; width: 18px;"></div>
+            <div class="skeleton-shimmer" style="height: 45%; width: 18px;"></div>
+          </div>
+          <!-- Chart Canvas -->
+          <div id="savingsChartContainer" style="display: none; height: 300px; position: relative;">
+            <canvas id="savingsChart"></canvas>
+          </div>
+          <!-- Empty State -->
+          <div id="savingsEmptyState" class="text-center py-5 d-none position-absolute top-50 start-50 translate-middle w-100">
+            <i class="bi bi-piggy-bank fs-1 text-muted"></i>
+            <p class="text-muted small mt-2 mb-0">No savings history recorded yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 6px;
+  }
+  @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>

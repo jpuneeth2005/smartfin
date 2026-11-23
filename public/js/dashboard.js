@@ -25,6 +25,7 @@
 
   function fetchDashboard() {
     showSkeletons();
+    fetchBudgetAlerts();
 
     SmartFin.api('GET', '/api/dashboard')
       .done(function (res) {
@@ -37,6 +38,44 @@
       })
       .fail(function (xhr) {
         SmartFin.showToast('error', 'Failed to load dashboard metrics');
+      });
+  }
+
+  function fetchBudgetAlerts() {
+    SmartFin.api('GET', '/api/budgets')
+      .done(function (res) {
+        var alerts = (res && res.data && res.data.alerts) || [];
+        var $container = $('#dashboardBudgetAlerts');
+        if (!$container.length) return;
+
+        if (alerts.length === 0) {
+          $container.addClass('d-none').empty();
+          return;
+        }
+
+        var exceeded = alerts.filter(function (a) { return a.status === 'exceeded'; });
+        var alertClass = exceeded.length > 0 ? 'alert-danger' : 'alert-warning';
+        var iconClass = exceeded.length > 0 ? 'bi-exclamation-octagon-fill text-danger' : 'bi-exclamation-triangle-fill text-warning';
+        var heading = exceeded.length > 0 ? 'Budget Exceeded' : 'Budget Warning';
+        var alertMessages = alerts.map(function (a) { return escapeHtml(a.message); }).join(' &bull; ');
+
+        var html =
+          '<div class="alert ' + alertClass + ' d-flex align-items-center justify-content-between shadow-sm py-2 px-3 mb-0" role="alert">' +
+          '  <div class="d-flex align-items-center gap-2 overflow-hidden me-2">' +
+          '    <i class="bi ' + iconClass + ' fs-5 flex-shrink-0"></i>' +
+          '    <div class="small text-truncate">' +
+          '      <strong>' + heading + ':</strong> ' + alertMessages +
+          '    </div>' +
+          '  </div>' +
+          '  <a href="/budgets" class="btn btn-sm ' + (exceeded.length > 0 ? 'btn-danger' : 'btn-warning') + ' text-nowrap fw-semibold">' +
+          '    Manage Budgets <i class="bi bi-arrow-right"></i>' +
+          '  </a>' +
+          '</div>';
+
+        $container.html(html).removeClass('d-none');
+      })
+      .fail(function () {
+        $('#dashboardBudgetAlerts').addClass('d-none').empty();
       });
   }
 
