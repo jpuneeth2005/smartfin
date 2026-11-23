@@ -3,6 +3,7 @@ const { sendSuccess, sendError } = require('../utils/apiResponse');
 const User = require('../models/User');
 const { ROLES } = require('../config/constants');
 const bcrypt = require('bcrypt');
+const { generateToken } = require('../middleware/csrf');
 
 /**
  * POST /api/auth/register
@@ -27,6 +28,10 @@ const register = asyncHandler(async (req, res) => {
     req.session.regenerate((err) => (err ? reject(err) : resolve()))
   );
   req.session.userId = user._id;
+  const newCsrfToken = generateToken(req, true);
+  await new Promise((resolve, reject) =>
+    req.session.save((err) => (err ? reject(err) : resolve()))
+  );
 
   return sendSuccess(
     res,
@@ -37,6 +42,7 @@ const register = asyncHandler(async (req, res) => {
         email: user.email,
         role: user.role,
       },
+      csrfToken: newCsrfToken,
     },
     'Registration successful',
     201
@@ -69,6 +75,10 @@ const login = asyncHandler(async (req, res) => {
     req.session.regenerate((err) => (err ? reject(err) : resolve()))
   );
   req.session.userId = user._id;
+  const newCsrfToken = generateToken(req, true);
+  await new Promise((resolve, reject) =>
+    req.session.save((err) => (err ? reject(err) : resolve()))
+  );
 
   // Non-blocking last-login timestamp update
   User.updateOne({ _id: user._id }, { lastLoginAt: new Date() }).catch(
@@ -84,6 +94,7 @@ const login = asyncHandler(async (req, res) => {
         email: user.email,
         role: user.role,
       },
+      csrfToken: newCsrfToken,
     },
     'Login successful'
   );

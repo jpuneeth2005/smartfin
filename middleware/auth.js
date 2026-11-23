@@ -42,7 +42,9 @@ const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
       if (isApiRequest(req)) return sendError(res, 'Forbidden', 403);
-      return res.redirect('/dashboard');
+      const err = new Error('Forbidden - Access denied');
+      err.status = 403;
+      return next(err);
     }
     next();
   };

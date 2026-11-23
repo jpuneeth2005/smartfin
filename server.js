@@ -1,3 +1,5 @@
+'use strict';
+
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
@@ -8,6 +10,8 @@ const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const connectDB = require('./config/db');
 const sessionMiddleware = require('./config/session');
+const { csrfProtection, generateToken } = require('./middleware/csrf');
+const { apiLimiter } = require('./middleware/security');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -19,13 +23,52 @@ const pageRoutes = require('./routes/pageRoutes');
 
 const app = express();
 
+// Disable x-powered-by
+app.disable('x-powered-by');
+
 // Trust proxy in production
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
 
-// Security
-app.use(helmet({ contentSecurityPolicy: false }));
+// Security: Helmet with CSP allowing required CDNs and data: images
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          'https://code.jquery.com',
+          'https://cdn.jsdelivr.net',
+          'https://cdn.tailwindcss.com',
+          // Tailwind Play CDN executes arbitrary runtime styling and inline configuration scripts
+          "'unsafe-inline'",
+        ],
+        styleSrc: [
+          "'self'",
+          'https://cdn.jsdelivr.net',
+          'https://fonts.googleapis.com',
+          // Tailwind Play CDN injects dynamically computed utility classes directly into runtime <style> tags
+          "'unsafe-inline'",
+        ],
+        fontSrc: [
+          "'self'",
+          'https://fonts.gstatic.com',
+          'https://cdn.jsdelivr.net',
+        ],
+        imgSrc: [
+          "'self'",
+          'data:',
+        ],
+        connectSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+      },
+    },
+  })
+);
+
 app.use(compression());
 app.use(morgan('dev'));
 
@@ -48,15 +91,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 
-// Locals
-app.use((req, res, next) => {
-  res.locals.currentUser = req.session.userId ? null : null; // will be populated by ensureAuth
-  next();
-});
-
-// IMPORTANT: set currentUser for all requests using session
+// Set currentUser and csrfToken for all views
 app.use(async (req, res, next) => {
-  if (req.session.userId) {
+  if (req.session) {
+    res.locals.csrfToken = generateToken(req);
+  } else {
+    res.locals.csrfToken = '';
+  }
+
+  if (req.session && req.session.userId) {
     try {
       const User = require('./models/User');
       const user = await User.findById(req.session.userId);
@@ -72,6 +115,12 @@ app.use(async (req, res, next) => {
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+
+// General rate limiter for all /api endpoints (300 requests per 15 min)
+app.use('/api', apiLimiter);
+
+// CSRF synchronised protection on all mutating requests (POST, PUT, DELETE, PATCH)
+app.use(csrfProtection);
 
 // Routes
 app.use('/api/auth', authRoutes);

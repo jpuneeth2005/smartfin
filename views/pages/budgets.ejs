@@ -9,14 +9,14 @@
     <div class="d-flex flex-wrap align-items-center gap-2">
       <!-- Month Navigation Controls -->
       <div class="d-flex align-items-center bg-white rounded shadow-sm border p-1">
-        <button type="button" class="btn btn-sm btn-light border-0" id="btnPrevMonth" title="Previous Month">
+        <button type="button" class="btn btn-sm btn-light border-0" id="btnPrevMonth" title="Previous Month" aria-label="Previous Month">
           <i class="bi bi-chevron-left"></i>
         </button>
         <div class="px-2 d-flex align-items-center gap-1">
           <i class="bi bi-calendar3 text-teal"></i>
-          <input type="month" id="currentMonthInput" class="form-control form-control-sm border-0 fw-semibold text-center" style="width: 145px; cursor: pointer; background: transparent;" />
+          <input type="month" id="currentMonthInput" class="form-control form-control-sm border-0 fw-semibold text-center" style="width: 145px; cursor: pointer; background: transparent;" aria-label="Selected month" />
         </div>
-        <button type="button" class="btn btn-sm btn-light border-0" id="btnNextMonth" title="Next Month">
+        <button type="button" class="btn btn-sm btn-light border-0" id="btnNextMonth" title="Next Month" aria-label="Next Month">
           <i class="bi bi-chevron-right"></i>
         </button>
       </div>

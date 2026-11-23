@@ -236,8 +236,8 @@
         '<td><span class="badge ' + badgeClass + ' px-2 py-1 fw-semibold">' + typeLabel + '</span></td>' +
         '<td class="text-end fw-bold ' + amountClass + ' text-nowrap">' + amountSign + SmartFin.formatCurrency(tx.amount) + '</td>' +
         '<td class="pe-4 text-end text-nowrap">' +
-        '  <button class="btn btn-sm btn-outline-primary me-1 btn-edit-tx" data-id="' + tx._id + '" title="Edit"><i class="bi bi-pencil"></i></button>' +
-        '  <button class="btn btn-sm btn-outline-danger btn-delete-tx" data-id="' + tx._id + '" title="Delete"><i class="bi bi-trash"></i></button>' +
+        '  <button class="btn btn-sm btn-outline-primary me-1 btn-edit-tx" data-id="' + tx._id + '" title="Edit" aria-label="Edit transaction"><i class="bi bi-pencil"></i></button>' +
+        '  <button class="btn btn-sm btn-outline-danger btn-delete-tx" data-id="' + tx._id + '" title="Delete" aria-label="Delete transaction"><i class="bi bi-trash"></i></button>' +
         '</td>' +
         '</tr>';
     });

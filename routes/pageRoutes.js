@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { ensureAuth, ensureGuest } = require('../middleware/auth');
+const { authorize } = require('../middleware/authorize');
 
 // GET / — redirect based on session
 router.get('/', (req, res) => {
@@ -60,6 +61,15 @@ router.get('/analytics', ensureAuth, (req, res) => {
     title: 'Analytics',
     path: '/analytics',
     scripts: ['/js/analytics.js'],
+  });
+});
+
+// GET /admin — admin only, others see 403 page
+router.get('/admin', ensureAuth, authorize('admin'), (req, res) => {
+  res.render('pages/admin', {
+    title: 'Admin',
+    path: '/admin',
+    scripts: ['/js/admin.js'],
   });
 });
 

@@ -1,8 +1,11 @@
 {
   "name": "smartfin",
   "version": "1.0.0",
-  "description": "",
+  "description": "SmartFin - Personal Finance Management Platform",
   "main": "server.js",
+  "engines": {
+    "node": ">= 18"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",

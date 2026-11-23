@@ -49,8 +49,12 @@
         data: data ? JSON.stringify(data) : undefined,
       };
       var csrf = $('meta[name="csrf-token"]').attr('content');
-      if (csrf) options.headers = { 'X-CSRF-Token': csrf };
-      return $.ajax(options);
+      if (csrf) options.headers = { 'x-csrf-token': csrf };
+      return $.ajax(options).done(function (res) {
+        if (res && res.data && res.data.csrfToken) {
+          $('meta[name="csrf-token"]').attr('content', res.data.csrfToken);
+        }
+      });
     },
   };
 
@@ -59,7 +63,7 @@
     $.ajaxSetup({
       beforeSend: function (xhr) {
         var csrf = $('meta[name="csrf-token"]').attr('content');
-        if (csrf) xhr.setRequestHeader('X-CSRF-Token', csrf);
+        if (csrf) xhr.setRequestHeader('x-csrf-token', csrf);
       },
     });
   });
