@@ -31,6 +31,17 @@ router.get('/register', ensureGuest, (req, res) => {
 router.get('/dashboard', ensureAuth, (req, res) => {
   res.render('pages/dashboard', {
     title: 'Dashboard',
+    path: '/dashboard',
+    scripts: ['/js/transactionModal.js', '/js/dashboard.js'],
+  });
+});
+
+// GET /transactions — requires authentication
+router.get('/transactions', ensureAuth, (req, res) => {
+  res.render('pages/transactions', {
+    title: 'Transactions',
+    path: '/transactions',
+    scripts: ['/js/transactionModal.js', '/js/transactions.js'],
   });
 });
 

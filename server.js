@@ -11,6 +11,8 @@ const sessionMiddleware = require('./config/session');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 
 const app = express();
@@ -72,6 +74,8 @@ app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/', pageRoutes);
 
 // Error handling
