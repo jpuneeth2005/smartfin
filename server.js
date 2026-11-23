@@ -42,14 +42,14 @@ app.use(
           'https://code.jquery.com',
           'https://cdn.jsdelivr.net',
           'https://cdn.tailwindcss.com',
-          // Tailwind Play CDN executes arbitrary runtime styling and inline configuration scripts
+          // Tailwind Play CDN needs its inline config to be set before the CDN script runs.
           "'unsafe-inline'",
         ],
         styleSrc: [
           "'self'",
           'https://cdn.jsdelivr.net',
           'https://fonts.googleapis.com',
-          // Tailwind Play CDN injects dynamically computed utility classes directly into runtime <style> tags
+          // Tailwind Play CDN injects generated utility classes into runtime <style> tags.
           "'unsafe-inline'",
         ],
         fontSrc: [
@@ -104,8 +104,8 @@ app.use(async (req, res, next) => {
       const User = require('./models/User');
       const user = await User.findById(req.session.userId);
       res.locals.currentUser = user;
-    } catch (e) {
-      res.locals.currentUser = null;
+    } catch (error) {
+      return next(error);
     }
   } else {
     res.locals.currentUser = null;

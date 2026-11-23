@@ -6,10 +6,10 @@
       <p class="text-muted mb-0">View, search, and manage all your income and expenses.</p>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <button type="button" class="btn btn-success fw-semibold d-flex align-items-center gap-2 shadow-sm" onclick="SmartFin.transactionModal.open({ type: 'income' })">
+      <button type="button" class="btn btn-success fw-semibold d-flex align-items-center gap-2 shadow-sm" data-open-transaction="income">
         <i class="bi bi-plus-circle"></i> Add Income
       </button>
-      <button type="button" class="btn btn-danger fw-semibold d-flex align-items-center gap-2 shadow-sm" onclick="SmartFin.transactionModal.open({ type: 'expense' })">
+      <button type="button" class="btn btn-danger fw-semibold d-flex align-items-center gap-2 shadow-sm" data-open-transaction="expense">
         <i class="bi bi-dash-circle"></i> Add Expense
       </button>
     </div>
@@ -116,7 +116,7 @@
         </div>
         <h5 class="fw-semibold text-dark mb-1">No transactions found</h5>
         <p class="text-muted small mb-3">Try adjusting your search filters or record a new transaction.</p>
-        <button type="button" class="btn btn-teal btn-sm px-3" onclick="SmartFin.transactionModal.open({ type: 'expense' })">
+        <button type="button" class="btn btn-teal btn-sm px-3" data-open-transaction="expense">
           <i class="bi bi-plus-lg me-1"></i> Add Transaction
         </button>
       </div>

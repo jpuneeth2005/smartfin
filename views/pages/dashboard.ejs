@@ -11,10 +11,10 @@
       </p>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <button type="button" class="btn btn-success fw-semibold d-flex align-items-center gap-2 shadow-sm" onclick="SmartFin.transactionModal.open({ type: 'income' })">
+      <button type="button" class="btn btn-success fw-semibold d-flex align-items-center gap-2 shadow-sm" data-open-transaction="income">
         <i class="bi bi-plus-circle"></i> Add Income
       </button>
-      <button type="button" class="btn btn-danger fw-semibold d-flex align-items-center gap-2 shadow-sm" onclick="SmartFin.transactionModal.open({ type: 'expense' })">
+      <button type="button" class="btn btn-danger fw-semibold d-flex align-items-center gap-2 shadow-sm" data-open-transaction="expense">
         <i class="bi bi-dash-circle"></i> Add Expense
       </button>
     </div>
@@ -192,7 +192,7 @@
           <div id="recentEmptyState" class="text-center py-5 d-none">
             <i class="bi bi-receipt-cutoff fs-1 text-muted"></i>
             <p class="text-muted small mt-2 mb-3">No recent transactions yet.</p>
-            <button type="button" class="btn btn-teal btn-sm" onclick="SmartFin.transactionModal.open({ type: 'expense' })">
+            <button type="button" class="btn btn-teal btn-sm" data-open-transaction="expense">
               Record First Transaction
             </button>
           </div>

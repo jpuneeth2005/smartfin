@@ -134,7 +134,7 @@
       var actionBtnClass = user.isActive ? 'btn-outline-danger' : 'btn-outline-success';
       var actionBtnIcon = user.isActive ? 'bi-person-slash' : 'bi-person-check';
       var actionBtnText = user.isActive ? 'Deactivate' : 'Activate';
-      var actionAria = (user.isActive ? 'Deactivate ' : 'Activate ') + (user.name || 'user');
+      var actionAria = escapeHtml((user.isActive ? 'Deactivate ' : 'Activate ') + (user.name || 'user'));
 
       var rowHtml =
         '<tr>' +

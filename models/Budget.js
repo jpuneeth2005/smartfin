@@ -12,7 +12,7 @@ const budgetSchema = new mongoose.Schema(
       type: String,
       required: true,
       validate: {
-        validator: (v) => /^\d{4}-\d{2}$/.test(v),
+        validator: (v) => /^\d{4}-(0[1-9]|1[0-2])$/.test(v),
         message: (props) => `${props.value} is not a valid month format (expected YYYY-MM)`,
       },
     },

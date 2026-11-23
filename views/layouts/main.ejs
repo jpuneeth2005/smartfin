@@ -61,8 +61,8 @@
 
   <!-- Logout -->
   <div class="p-3 border-top" style="border-color:rgba(255,255,255,0.1)!important;">
-    <button id="logoutBtn" class="btn w-100 d-flex align-items-center gap-2 justify-content-center"
-            style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:none;" onclick="doLogout()">
+    <button id="logoutBtn" class="btn logout-btn w-100 d-flex align-items-center gap-2 justify-content-center"
+            style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:none;">
       <i class="bi bi-box-arrow-right"></i> Logout
     </button>
   </div>
@@ -143,8 +143,8 @@
       <% } %>
     </ul>
     <div class="p-3 border-top" style="border-color:rgba(255,255,255,0.1)!important;">
-      <button class="btn w-100 d-flex align-items-center gap-2 justify-content-center"
-              style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:none;" onclick="doLogout()">
+      <button class="btn logout-btn w-100 d-flex align-items-center gap-2 justify-content-center"
+              style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:none;">
         <i class="bi bi-box-arrow-right"></i> Logout
       </button>
     </div>
@@ -181,21 +181,6 @@
     color: #fff !important;
   }
 </style>
-
-<script>
-  function doLogout() {
-    $.ajax({
-      url: '/api/auth/logout',
-      method: 'POST',
-      success: function() {
-        window.location.href = '/login';
-      },
-      error: function() {
-        window.location.href = '/login';
-      }
-    });
-  }
-</script>
 
 </body>
 </html>

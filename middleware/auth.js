@@ -6,7 +6,7 @@ const { sendError } = require('../utils/apiResponse');
 // just '/ping', not '/api/admin/ping').
 const isApiRequest = (req) => req.originalUrl.startsWith('/api');
 
-const ensureAuth = async (req, res, next) => {
+const ensureAuth = (req, res, next) => {
   const userId = req.session && req.session.userId;
 
   if (!userId) {
@@ -14,21 +14,24 @@ const ensureAuth = async (req, res, next) => {
     return res.redirect('/login');
   }
 
-  const user = await User.findById(userId);
-  if (!user) {
-    if (isApiRequest(req)) return sendError(res, 'Unauthorized', 401);
-    return res.redirect('/login');
-  }
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        if (isApiRequest(req)) return sendError(res, 'Unauthorized', 401);
+        return res.redirect('/login');
+      }
 
-  if (!user.isActive) {
-    if (isApiRequest(req)) {
-      return res.status(403).json({ success: false, message: 'Account is inactive' });
-    }
-    return res.redirect('/login?error=inactive');
-  }
+      if (!user.isActive) {
+        if (isApiRequest(req)) {
+          return res.status(403).json({ success: false, message: 'Account is inactive' });
+        }
+        return res.redirect('/login?error=inactive');
+      }
 
-  req.user = user;
-  next();
+      req.user = user;
+      return next();
+    })
+    .catch(next);
 };
 
 const ensureGuest = (req, res, next) => {

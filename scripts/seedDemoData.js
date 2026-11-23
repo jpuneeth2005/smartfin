@@ -196,6 +196,6 @@ async function seedDemoData() {
 }
 
 seedDemoData().catch((err) => {
-  console.error('Demo data seeding failed:', err);
+  console.error('Demo data seeding failed:', err.name);
   process.exit(1);
 });

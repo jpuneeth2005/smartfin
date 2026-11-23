@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { param, body } = require('express-validator');
+const { param, body, query } = require('express-validator');
 const router = express.Router();
 
 const { ensureAuth } = require('../middleware/auth');
@@ -20,7 +20,30 @@ router.use(ensureAuth, authorize('admin'));
 router.get('/stats', getStats);
 
 // GET /api/admin/users
-router.get('/users', getUsers);
+router.get(
+  '/users',
+  [
+    query('search')
+      .optional()
+      .isString()
+      .withMessage('Search must be a string')
+      .trim()
+      .isLength({ max: 100 })
+      .withMessage('Search cannot exceed 100 characters'),
+    query('page')
+      .optional()
+      .isInt({ min: 1, max: 1000000 })
+      .withMessage('Page must be a positive integer')
+      .toInt(),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 50 })
+      .withMessage('Limit must be between 1 and 50')
+      .toInt(),
+  ],
+  validate,
+  getUsers
+);
 
 // PUT /api/admin/users/:id/status
 router.put(

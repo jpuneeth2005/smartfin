@@ -32,6 +32,6 @@ async function seedAdmin() {
 }
 
 seedAdmin().catch((err) => {
-  console.error('Seed failed:', err.message);
+  console.error('Seed failed:', err.name);
   process.exit(1);
 });

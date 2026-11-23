@@ -293,5 +293,9 @@
 
   $(function () {
     initModal();
+
+    $(document).on('click', '[data-open-transaction]', function () {
+      window.SmartFin.transactionModal.open({ type: $(this).data('open-transaction') });
+    });
   });
 })();

@@ -155,17 +155,23 @@ const listQueryValidator = [
 
   query('from')
     .optional({ checkFalsy: true })
-    .isISO8601()
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .isISO8601({ strict: true, strictSeparator: true })
     .withMessage('from must be a valid date (YYYY-MM-DD)'),
 
   query('to')
     .optional({ checkFalsy: true })
-    .isISO8601()
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .isISO8601({ strict: true, strictSeparator: true })
     .withMessage('to must be a valid date (YYYY-MM-DD)'),
 
   query('search')
     .optional()
-    .trim(),
+    .isString()
+    .withMessage('Search must be a string')
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Search cannot exceed 100 characters'),
 ];
 
 module.exports = {

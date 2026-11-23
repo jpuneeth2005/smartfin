@@ -22,19 +22,29 @@
     showToast: function (type, message) {
       var bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : type === 'warning' ? 'bg-warning' : 'bg-info';
       var id = 'toast-' + Date.now();
-      var html =
-        '<div id="' + id + '" class="toast align-items-center text-white ' + bgClass + ' border-0" role="alert" aria-live="assertive" aria-atomic="true">' +
-        '<div class="d-flex">' +
-        '<div class="toast-body">' + message + '</div>' +
-        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
-        '</div></div>';
       var $container = $('#toast-container');
       if (!$container.length) {
         $container = $('<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:1100;"></div>');
         $('body').append($container);
       }
-      $container.append(html);
-      var toastEl = document.getElementById(id);
+      var toastEl = $('<div>', {
+        id: id,
+        class: 'toast align-items-center text-white ' + bgClass + ' border-0',
+        role: 'alert',
+        'aria-live': 'assertive',
+        'aria-atomic': 'true',
+      });
+      var content = $('<div>', { class: 'd-flex' });
+      content.append($('<div>', { class: 'toast-body' }).text(message));
+      content.append($('<button>', {
+        type: 'button',
+        class: 'btn-close btn-close-white me-2 m-auto',
+        'data-bs-dismiss': 'toast',
+        'aria-label': 'Close notification',
+      }));
+      toastEl.append(content);
+      $container.append(toastEl);
+      toastEl = toastEl[0];
       var toast = new bootstrap.Toast(toastEl, { delay: 4000 });
       toast.show();
       toastEl.addEventListener('hidden.bs.toast', function () { $(toastEl).remove(); });

@@ -8,7 +8,7 @@ const createBudgetValidator = [
     .trim()
     .notEmpty()
     .withMessage('Month is required')
-    .matches(/^\d{4}-\d{2}$/)
+    .matches(/^\d{4}-(0[1-9]|1[0-2])$/)
     .withMessage('Month must be in YYYY-MM format'),
 
   body('category')
@@ -72,7 +72,7 @@ const budgetIdValidator = [
 const budgetMonthQueryValidator = [
   query('month')
     .optional({ checkFalsy: true })
-    .matches(/^\d{4}-\d{2}$/)
+    .matches(/^\d{4}-(0[1-9]|1[0-2])$/)
     .withMessage('Month must be in YYYY-MM format'),
 ];
 

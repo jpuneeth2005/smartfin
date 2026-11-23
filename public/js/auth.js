@@ -104,8 +104,8 @@
         });
     });
 
-    // Logout button
-    $(document).on('click', '#logout-btn', function (e) {
+    // Logout buttons in the desktop and mobile navigation
+    $(document).on('click', '.logout-btn', function (e) {
       e.preventDefault();
       SmartFin.api('POST', '/api/auth/logout')
         .always(function () { window.location.href = '/login'; });

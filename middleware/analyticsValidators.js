@@ -18,11 +18,13 @@ const analyticsDateValidator = [
   query('from')
     .optional({ checkFalsy: true })
     .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .isISO8601({ strict: true, strictSeparator: true })
     .withMessage('from must be in YYYY-MM-DD format'),
 
   query('to')
     .optional({ checkFalsy: true })
     .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .isISO8601({ strict: true, strictSeparator: true })
     .withMessage('to must be in YYYY-MM-DD format'),
 
   query('groupBy')

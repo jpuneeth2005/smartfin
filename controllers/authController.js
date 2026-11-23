@@ -82,7 +82,7 @@ const login = asyncHandler(async (req, res) => {
 
   // Non-blocking last-login timestamp update
   User.updateOne({ _id: user._id }, { lastLoginAt: new Date() }).catch(
-    (err) => console.error('Failed to update lastLoginAt:', err)
+    () => console.error('Failed to update lastLoginAt')
   );
 
   return sendSuccess(
@@ -105,10 +105,13 @@ const login = asyncHandler(async (req, res) => {
  */
 const logout = asyncHandler(async (req, res) => {
   await new Promise((resolve, reject) =>
-    req.session.destroy((err) => (err ? reject(err) : resolve()))
+    req.session.regenerate((err) => (err ? reject(err) : resolve()))
   );
-  res.clearCookie('smartfin.sid');
-  return sendSuccess(res, {}, 'Logged out successfully');
+  const csrfToken = generateToken(req, true);
+  await new Promise((resolve, reject) =>
+    req.session.save((err) => (err ? reject(err) : resolve()))
+  );
+  return sendSuccess(res, { csrfToken }, 'Logged out successfully');
 });
 
 /**
