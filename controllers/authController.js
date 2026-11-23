@@ -4,6 +4,7 @@ const User = require('../models/User');
 const { ROLES } = require('../config/constants');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../middleware/csrf');
+const { recordAudit } = require('../utils/auditLogger');
 
 /**
  * POST /api/auth/register
@@ -32,6 +33,13 @@ const register = asyncHandler(async (req, res) => {
   await new Promise((resolve, reject) =>
     req.session.save((err) => (err ? reject(err) : resolve()))
   );
+  recordAudit({
+    actor: user._id,
+    actorEmail: user.email,
+    action: 'user.registered',
+    targetType: 'user',
+    targetId: user._id,
+  });
 
   return sendSuccess(
     res,
@@ -79,6 +87,12 @@ const login = asyncHandler(async (req, res) => {
   await new Promise((resolve, reject) =>
     req.session.save((err) => (err ? reject(err) : resolve()))
   );
+  recordAudit({
+    actor: user._id,
+    actorEmail: user.email,
+    action: 'user.login',
+    targetType: 'session',
+  });
 
   // Non-blocking last-login timestamp update
   User.updateOne({ _id: user._id }, { lastLoginAt: new Date() }).catch(
@@ -104,14 +118,19 @@ const login = asyncHandler(async (req, res) => {
  * POST /api/auth/logout
  */
 const logout = asyncHandler(async (req, res) => {
+  const actor = req.session && req.session.userId ? req.session.userId : null;
+  const actorEmail = req.user ? req.user.email : null;
   await new Promise((resolve, reject) =>
-    req.session.regenerate((err) => (err ? reject(err) : resolve()))
+    req.session.destroy((err) => (err ? reject(err) : resolve()))
   );
-  const csrfToken = generateToken(req, true);
-  await new Promise((resolve, reject) =>
-    req.session.save((err) => (err ? reject(err) : resolve()))
-  );
-  return sendSuccess(res, { csrfToken }, 'Logged out successfully');
+  recordAudit({
+    actor,
+    actorEmail,
+    action: 'user.logout',
+    targetType: 'session',
+  });
+  res.clearCookie('smartfin.sid');
+  return sendSuccess(res, {}, 'Logged out successfully');
 });
 
 /**

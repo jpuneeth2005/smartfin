@@ -21,14 +21,28 @@ const budgetRoutes = require('./routes/budgetRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 
+if (process.env.NODE_ENV === 'production') {
+  const required = ['MONGODB_URI', 'SESSION_SECRET'];
+  const missing = required.filter((name) => !process.env[name]);
+  if (missing.length) {
+    console.error('Production startup rejected: required environment configuration is missing');
+    process.exit(1);
+  }
+}
+
 const app = express();
 
 // Disable x-powered-by
 app.disable('x-powered-by');
 
-// Trust proxy in production
+// Trust proxy only in production and only when explicitly configured.
 if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
+  const trustProxy = process.env.TRUST_PROXY;
+  if (trustProxy === 'true') {
+    app.set('trust proxy', 1);
+  } else if (/^\d+$/.test(trustProxy || '')) {
+    app.set('trust proxy', parseInt(trustProxy, 10));
+  }
 }
 
 // Security: Helmet with CSP allowing required CDNs and data: images
@@ -42,14 +56,12 @@ app.use(
           'https://code.jquery.com',
           'https://cdn.jsdelivr.net',
           'https://cdn.tailwindcss.com',
-          // Tailwind Play CDN needs its inline config to be set before the CDN script runs.
-          "'unsafe-inline'",
         ],
         styleSrc: [
           "'self'",
           'https://cdn.jsdelivr.net',
           'https://fonts.googleapis.com',
-          // Tailwind Play CDN injects generated utility classes into runtime <style> tags.
+          // Inline style attributes remain in existing EJS views.
           "'unsafe-inline'",
         ],
         fontSrc: [

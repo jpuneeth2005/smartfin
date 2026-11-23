@@ -11,6 +11,7 @@ const {
   getStats,
   getUsers,
   updateUserStatus,
+  getAuditLogs,
 } = require('../controllers/adminController');
 
 // All admin routes require ensureAuth + authorize('admin')
@@ -54,6 +55,17 @@ router.put(
   ],
   validate,
   updateUserStatus
+);
+
+router.get(
+  '/audit-logs',
+  [
+    query('action').optional().isString().trim().isLength({ max: 100 }),
+    query('page').optional().isInt({ min: 1 }).toInt(),
+    query('limit').optional().isInt({ min: 1, max: 100 }).toInt(),
+  ],
+  validate,
+  getAuditLogs
 );
 
 module.exports = router;

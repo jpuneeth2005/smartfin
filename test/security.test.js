@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const { csrfProtection } = require('../middleware/csrf');
 const { updateUserStatus, getUsers } = require('../controllers/adminController');
+const { ensureAuth } = require('../middleware/auth');
+const { safeMetadata } = require('../utils/auditLogger');
 
 function runCsrf(req) {
   return new Promise((resolve) => csrfProtection(req, {}, resolve));
@@ -128,4 +130,47 @@ test('admin user search escapes regex input and excludes passwords', async (t) =
   assert.equal(observedFilter.$or[0].name.$regex, 'name\\+test');
   assert.equal(selectedFields, '-password');
   assert.equal(res.body.data.pagination.page, 2);
+});
+
+test('audit metadata removes passwords, tokens, cookies and session ids', () => {
+  const safe = safeMetadata({
+    password: 'secret',
+    confirmPassword: 'secret',
+    csrfToken: 'token',
+    token: 'token',
+    cookie: 'cookie',
+    sessionId: 'session',
+    amount: 125,
+  });
+
+  assert.deepEqual(safe, { amount: 125 });
+});
+
+test('deactivated users cannot continue through ensureAuth', async (t) => {
+  const originalFindById = User.findById;
+  t.after(() => {
+    User.findById = originalFindById;
+  });
+  User.findById = async () => ({ isActive: false, role: 'user' });
+
+  let destroyed = false;
+  const req = {
+    originalUrl: '/api/dashboard',
+    session: {
+      userId: new mongoose.Types.ObjectId(),
+      destroy(callback) {
+        destroyed = true;
+        callback();
+      },
+    },
+  };
+  const res = createResponse();
+
+  await ensureAuth(req, res, (error) => {
+    if (error) throw error;
+  });
+
+  assert.equal(destroyed, true);
+  assert.equal(res.statusCode, 403);
+  assert.equal(res.body.message, 'Account is inactive');
 });

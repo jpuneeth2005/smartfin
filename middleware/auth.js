@@ -23,9 +23,11 @@ const ensureAuth = (req, res, next) => {
 
       if (!user.isActive) {
         if (isApiRequest(req)) {
+          req.session.destroy(() => {});
           return res.status(403).json({ success: false, message: 'Account is inactive' });
         }
-        return res.redirect('/login?error=inactive');
+        req.session.destroy(() => res.redirect('/login?error=inactive'));
+        return;
       }
 
       req.user = user;

@@ -6,6 +6,8 @@ const Transaction = require('../models/Transaction');
 const Budget = require('../models/Budget');
 const { sendSuccess, sendError } = require('../utils/apiResponse');
 const asyncHandler = require('../utils/asyncHandler');
+const AuditLog = require('../models/AuditLog');
+const { recordAudit } = require('../utils/auditLogger');
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -111,6 +113,13 @@ const updateUserStatus = asyncHandler(async (req, res) => {
 
   user.isActive = isActive;
   await user.save();
+  recordAudit({
+    actor: req.session.userId,
+    action: isActive ? 'user.reactivated' : 'user.deactivated',
+    targetType: 'user',
+    targetId: user._id,
+    metadata: { isActive },
+  });
 
   return sendSuccess(
     res,
@@ -119,8 +128,40 @@ const updateUserStatus = asyncHandler(async (req, res) => {
   );
 });
 
+/**
+ * GET /api/admin/audit-logs
+ * Admin-only paginated audit log access.
+ */
+const getAuditLogs = asyncHandler(async (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 25));
+  const filter = {};
+
+  if (req.query.action) {
+    filter.action = String(req.query.action).slice(0, 100);
+  }
+
+  const total = await AuditLog.countDocuments(filter);
+  const logs = await AuditLog.find(filter)
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .lean();
+
+  return sendSuccess(res, {
+    logs,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit) || 0,
+    },
+  });
+});
+
 module.exports = {
   getStats,
   getUsers,
   updateUserStatus,
+  getAuditLogs,
 };

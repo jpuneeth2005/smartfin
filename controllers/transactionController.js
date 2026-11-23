@@ -4,6 +4,7 @@ const Transaction = require('../models/Transaction');
 const { sendSuccess, sendError } = require('../utils/apiResponse');
 const asyncHandler = require('../utils/asyncHandler');
 const { parseDateInput, endOfDayIST } = require('../utils/dateRange');
+const { recordAudit } = require('../utils/auditLogger');
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -23,6 +24,14 @@ const createTransaction = asyncHandler(async (req, res) => {
   };
 
   const transaction = await Transaction.create(txData);
+  recordAudit({
+    actor: req.session.userId,
+    actorEmail: req.user ? req.user.email : null,
+    action: 'transaction.created',
+    targetType: 'transaction',
+    targetId: transaction._id,
+    metadata: { type: transaction.type, amount: transaction.amount, category: transaction.category },
+  });
   return sendSuccess(res, transaction, 'Transaction created successfully', 201);
 });
 
@@ -142,6 +151,14 @@ const updateTransaction = asyncHandler(async (req, res) => {
 
   // Save to trigger Mongoose schema validation
   await transaction.save();
+  recordAudit({
+    actor: req.session.userId,
+    actorEmail: req.user ? req.user.email : null,
+    action: 'transaction.updated',
+    targetType: 'transaction',
+    targetId: transaction._id,
+    metadata: { type: transaction.type, amount: transaction.amount, category: transaction.category },
+  });
 
   return sendSuccess(res, transaction, 'Transaction updated successfully');
 });
@@ -159,6 +176,13 @@ const deleteTransaction = asyncHandler(async (req, res) => {
   if (!transaction) {
     return sendError(res, 'Transaction not found', 404);
   }
+  recordAudit({
+    actor: req.session.userId,
+    actorEmail: req.user ? req.user.email : null,
+    action: 'transaction.deleted',
+    targetType: 'transaction',
+    targetId: transaction._id,
+  });
 
   return sendSuccess(res, null, 'Transaction deleted successfully');
 });

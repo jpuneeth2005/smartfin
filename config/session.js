@@ -1,6 +1,14 @@
 const session = require('express-session');
 const MongoStore = require('connect-mongo').default;
 
+if (!process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET is required');
+}
+
+if (!process.env.MONGODB_URI) {
+  throw new Error('MONGODB_URI is required');
+}
+
 module.exports = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
