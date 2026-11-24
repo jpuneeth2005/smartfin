@@ -57,9 +57,10 @@
         url: url,
         contentType: 'application/json',
         data: data ? JSON.stringify(data) : undefined,
+        xhrFields: { withCredentials: true },
       };
       var csrf = $('meta[name="csrf-token"]').attr('content');
-      if (csrf) options.headers = { 'x-csrf-token': csrf };
+      options.headers = { 'x-csrf-token': csrf || '' };
       return $.ajax(options).done(function (res) {
         if (res && res.data && res.data.csrfToken) {
           $('meta[name="csrf-token"]').attr('content', res.data.csrfToken);

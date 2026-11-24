@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const mongoose = require('mongoose');
 const User = require('../models/User');
-const { csrfProtection } = require('../middleware/csrf');
+const { csrfProtection, generateToken } = require('../middleware/csrf');
 const { updateUserStatus, getUsers } = require('../controllers/adminController');
 const { ensureAuth } = require('../middleware/auth');
 const { safeMetadata } = require('../utils/auditLogger');
@@ -46,6 +46,21 @@ test('CSRF protection rejects missing and incorrect tokens with 403', async () =
   });
   assert.equal(incorrectError.status, 403);
   assert.equal(incorrectError.message, 'Invalid CSRF token');
+});
+
+test('CSRF token generated for a page is stored in its session and accepted', async () => {
+  const req = { session: {} };
+  const token = generateToken(req);
+
+  assert.equal(req.session.csrfToken, token);
+  const error = await runCsrf({
+    method: 'POST',
+    headers: { 'x-csrf-token': token },
+    body: {},
+    session: req.session,
+  });
+
+  assert.equal(error, undefined);
 });
 
 test('admin cannot deactivate their own account', async () => {
